@@ -12,3 +12,18 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk deploy`      deploy this stack to your default AWS account/region
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
+
+
+##
+
+Constantly going to learn and update this Dynamo to use:
+
+- nodejsfunctions
+- sdk v3
+- bundling
+- testing
+- separate config
+- migration script
+- one table
+- minify
+- could integrate with SAML?
