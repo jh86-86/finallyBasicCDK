@@ -35,8 +35,30 @@ export class ApigatewayTutStack extends cdk.Stack {
       },
     });
 
+    const deleteLambda = new lambda.Function(this, "deleteItemJJ", {
+      code: new lambda.AssetCode("./src"),
+      handler: "delete.handler",
+      runtime: lambda.Runtime.NODEJS_14_X,
+      environment: {
+        TABLE_NAME: dynamoTable.tableName,
+        PRIMARY_KEY: "itemId",
+      },
+    });
+
+    const updateLambda = new lambda.Function(this, "updateItemJJ", {
+      code: new lambda.AssetCode("./src"),
+      handler: "update.handler",
+      runtime: lambda.Runtime.NODEJS_14_X,
+      environment: {
+        TABLE_NAME: dynamoTable.tableName,
+        PRIMARY_KEY: "itemId",
+      },
+    });
+
     dynamoTable.grantReadData(getAll);
-    dynamoTable.grantReadWriteData(createLambda)
+    dynamoTable.grantReadWriteData(createLambda);
+    dynamoTable.grantReadWriteData(deleteLambda);
+    dynamoTable.grantReadWriteData(updateLambda);
 
     const api = new apigateway.RestApi(this, "jjapigateway", {
       restApiName: "JJ test api",
@@ -44,13 +66,24 @@ export class ApigatewayTutStack extends cdk.Stack {
 
     const rootApi = api.root.addResource("root");
     
-    const getApi = rootApi.addResource('get')
+    const getApi = rootApi.addResource('getItem')
     const getAllIntegration = new apigateway.LambdaIntegration(getAll);
     getApi.addMethod("GET", getAllIntegration);
 
-    const createApi = rootApi.addResource('create');
+    const createApi = rootApi.addResource('createItem');
     const createApiIntegration = new apigateway.LambdaIntegration(createLambda);
     createApi.addMethod("POST", createApiIntegration)
+
+    const deleteApi = rootApi.addResource('{id}');
+    const deleteApiIntegration = new apigateway.LambdaIntegration(deleteLambda);
+    deleteApi.addMethod("DELETE", deleteApiIntegration);
+
+
+
+
+    const updateApi = rootApi.addResource('updateItem');
+    const updateApiIntegration = new apigateway.LambdaIntegration(updateLambda);
+    updateApi.addMethod("PUT", updateApiIntegration);
 
     const plan = api.addUsagePlan("UsagePlan", {
       name: "EASY",
