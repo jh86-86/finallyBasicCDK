@@ -24,3 +24,13 @@ export const handler = async (event: any = {}): Promise<any> => {
     return { statusCode: 400, body: JSON.stringify(error) };
   }
 };
+
+
+// www.example.com/root/createItem
+// automatically creates id
+
+/*
+{
+    "test": "this was updated"
+}
+*/

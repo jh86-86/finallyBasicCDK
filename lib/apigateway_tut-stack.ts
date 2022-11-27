@@ -55,10 +55,21 @@ export class ApigatewayTutStack extends cdk.Stack {
       },
     });
 
+    const getItemByIdLambda = new lambda.Function(this, "getItemByIdJJ", {
+      code: new lambda.AssetCode("./src"),
+      handler: "getById.handler",
+      runtime: lambda.Runtime.NODEJS_14_X,
+      environment: {
+        TABLE_NAME: dynamoTable.tableName,
+        PRIMARY_KEY: "itemId",
+      },
+    });
+
     dynamoTable.grantReadData(getAll);
     dynamoTable.grantReadWriteData(createLambda);
     dynamoTable.grantReadWriteData(deleteLambda);
     dynamoTable.grantReadWriteData(updateLambda);
+    dynamoTable.grantReadData(getItemByIdLambda);
 
     const api = new apigateway.RestApi(this, "jjapigateway", {
       restApiName: "JJ test api",
@@ -75,9 +86,12 @@ export class ApigatewayTutStack extends cdk.Stack {
     createApi.addMethod("POST", createApiIntegration)
 
     // need this for the path parameter so I imagine put is the same and get by id
-    const deleteApi = rootApi.addResource('{id}');
+    const customer = rootApi.addResource('{id}');
     const deleteApiIntegration = new apigateway.LambdaIntegration(deleteLambda);
-    deleteApi.addMethod("DELETE", deleteApiIntegration);
+    customer.addMethod("DELETE", deleteApiIntegration);
+
+    const getByIdIntegration = new apigateway.LambdaIntegration(getItemByIdLambda);
+    customer.addMethod("GET",getByIdIntegration);
 
 
 

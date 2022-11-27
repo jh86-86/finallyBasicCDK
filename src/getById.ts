@@ -6,28 +6,16 @@ const TABLE_NAME = process.env.TABLE_NAME || "";
 const PRIMARY_KEY = process.env.PRIMARY_KEY || "";
 
 export const handler = async (event: any = {}): Promise<any> => {
-  const item =JSON.parse(event.body);
-
 
   const params = {
     TableName: TABLE_NAME,
-    Item: {itemId: item.id, test: item.test},
+    Key: { itemId : event.pathParameters.id || 'M' },
   };
 
   try {
-    await db.put(params).promise();
-    return { statusCode: 200, body: `${item.id} was updated` };
+    const result = await db.get(params).promise();
+    return { statusCode: 200, body: JSON.stringify(result) };
   } catch (error) {
     return { statusCode: 400, body: JSON.stringify(error) };
   }
 };
-
-
-// www.example.com/root/updateItem
-
-/* 
-{
-    "id": "M",
-    "test": "this was updated"
-}
-*/
