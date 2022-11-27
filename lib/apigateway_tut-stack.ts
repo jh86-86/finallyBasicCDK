@@ -74,6 +74,7 @@ export class ApigatewayTutStack extends cdk.Stack {
     const createApiIntegration = new apigateway.LambdaIntegration(createLambda);
     createApi.addMethod("POST", createApiIntegration)
 
+    // need this for the path parameter so I imagine put is the same and get by id
     const deleteApi = rootApi.addResource('{id}');
     const deleteApiIntegration = new apigateway.LambdaIntegration(deleteLambda);
     deleteApi.addMethod("DELETE", deleteApiIntegration);

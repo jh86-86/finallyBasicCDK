@@ -26,3 +26,6 @@ export const handler = async (event: any = {}): Promise<any> => {
     return { statusCode: 400, body: JSON.stringify(error) };
   }
 };
+
+// how to use use api end point www.example.com/root/Q
+// for some reason it does not play nice with event.body 
